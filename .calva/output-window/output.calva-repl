@@ -1124,3 +1124,403 @@ Huston
 The quick brown fox jumps over the lazy dog.
 nil
 clj::slatescript-tools.core=> 
+; Evaluating file: core.clj
+JonathanHustonThe quick brown fox jumps over the lazy dog.
+nil
+clj::slatescript-tools.core=> 
+; Evaluating file: core.clj
+:w:r
+:w:p
+:w:p
+:w:r
+:w:p
+:w:p
+:w:r
+:w:r
+:w:r
+:w:p
+:w:body
+:w:document
+JonathanHustonThe quick brown fox jumps over the lazy dog.
+nil
+clj::slatescript-tools.core=> 
+; Evaluating file: core.clj
+:w:r
+Jonathan
+:w:p
+Jonathan
+:w:p
+
+:w:r
+Huston
+:w:p
+Huston
+:w:p
+
+:w:r
+The quick 
+:w:r
+brown fox jumps over
+:w:r
+ the lazy dog.
+:w:p
+The quick brown fox jumps over the lazy dog.
+:w:body
+JonathanHustonThe quick brown fox jumps over the lazy dog.
+:w:document
+JonathanHustonThe quick brown fox jumps over the lazy dog.
+JonathanHustonThe quick brown fox jumps over the lazy dog.
+nil
+clj::slatescript-tools.core=> 
+; Evaluating file: core.clj
+:w:r
+Jonathan
+:w:p
+Jonathan
+:w:p
+
+:w:r
+Huston
+:w:p
+Huston
+:w:p
+
+:w:r
+The quick 
+:w:b
+
+:w:bCs
+
+:w:rPr
+
+:w:r
+brown fox jumps over
+:w:r
+ the lazy dog.
+:w:p
+The quick brown fox jumps over the lazy dog.
+:w:pgSz
+
+:w:pgMar
+
+:w:cols
+
+:w:docGrid
+
+:w:sectPr
+
+:w:body
+JonathanHustonThe quick brown fox jumps over the lazy dog.
+:w:document
+JonathanHustonThe quick brown fox jumps over the lazy dog.
+JonathanHustonThe quick brown fox jumps over the lazy dog.
+nil
+clj::slatescript-tools.core=> 
+; Evaluating file: core.clj
+:w:r
+Jonathan
+:w:p
+Jonathan
+:w:p
+
+:w:r
+Huston
+:w:p
+Huston
+:w:p
+
+:w:r
+The quick 
+:w:b
+
+:w:bCs
+
+:w:rPr
+
+:w:r
+brown fox jumps over
+:w:r
+ the lazy dog.
+:w:p
+The quick brown fox jumps over the lazy dog.
+:w:pgSz
+
+:w:pgMar
+
+:w:cols
+
+:w:docGrid
+
+:w:sectPr
+
+:w:body
+JonathanHustonThe quick brown fox jumps over the lazy dog.
+:w:document
+JonathanHustonThe quick brown fox jumps over the lazy dog.
+JonathanHustonThe quick brown fox jumps over the lazy dog.
+nil
+clj::slatescript-tools.core=> 
+; Evaluating file: core.clj
+:w:r
+Jonathan
+:w:p
+Jonathan
+:w:p
+
+:w:r
+Huston
+:w:p
+Huston
+:w:p
+
+:w:r
+The quick 
+:w:r
+brown fox jumps over
+:w:r
+ the lazy dog.
+:w:p
+The quick brown fox jumps over the lazy dog.
+:w:body
+JonathanHustonThe quick brown fox jumps over the lazy dog.
+:w:document
+JonathanHustonThe quick brown fox jumps over the lazy dog.
+JonathanHustonThe quick brown fox jumps over the lazy dog.
+nil
+clj::slatescript-tools.core=> 
+; Evaluating file: core.clj
+:w:r
+Jonathan
+:w:p
+Jonathan
+:w:p
+
+:w:r
+Huston
+:w:p
+Huston
+:w:p
+
+:w:r
+The quick 
+:w:r
+brown fox jumps over
+:w:r
+ the lazy dog.
+:w:p
+The quick brown fox jumps over the lazy dog.
+:w:body
+JonathanHustonThe quick brown fox jumps over the lazy dog.
+:w:document
+JonathanHustonThe quick brown fox jumps over the lazy dog.
+JonathanHustonThe quick brown fox jumps over the lazy dog.
+nil
+clj::slatescript-tools.core=> 
+; Evaluating file: core.clj
+:w:r
+Jonathan
+:w:p
+Jonathan
+:w:p
+
+:w:r
+Huston
+:w:p
+Huston
+:w:p
+
+:w:r
+The quick 
+:w:b
+
+:w:bCs
+
+:w:rPr
+
+:w:r
+brown fox jumps over
+:w:r
+ the lazy dog.
+:w:p
+The quick brown fox jumps over the lazy dog.
+:w:pgSz
+
+:w:pgMar
+
+:w:cols
+
+:w:docGrid
+
+:w:sectPr
+
+:w:body
+JonathanHustonThe quick brown fox jumps over the lazy dog.
+:w:document
+JonathanHustonThe quick brown fox jumps over the lazy dog.
+JonathanHustonThe quick brown fox jumps over the lazy dog.
+nil
+clj::slatescript-tools.core=> 
+; Evaluating file: core.clj
+:w:r
+Jonathan
+:w:p
+Jonathan
+:w:p
+
+:w:r
+Huston
+:w:p
+Huston
+:w:p
+
+:w:r
+The quick 
+:w:b
+
+:w:bCs
+
+:w:rPr
+
+:w:r
+brown fox jumps over
+:w:r
+ the lazy dog.
+:w:p
+The quick brown fox jumps over the lazy dog.
+:w:pgSz
+
+:w:pgMar
+
+:w:cols
+
+:w:docGrid
+
+:w:sectPr
+
+:w:body
+JonathanHustonThe quick brown fox jumps over the lazy dog.
+:w:document
+JonathanHustonThe quick brown fox jumps over the lazy dog.
+JonathanHustonThe quick brown fox jumps over the lazy dog.
+nil
+clj::slatescript-tools.core=> 
+; Evaluating file: core.clj
+:w:r
+Jonathan
+:w:p
+Jonathan
+:w:p
+
+:w:r
+Huston
+:w:p
+Huston
+:w:p
+
+:w:r
+The quick 
+:w:b
+
+:w:bCs
+
+:w:rPr
+
+:w:r
+brown fox jumps over
+:w:r
+ the lazy dog.
+:w:p
+The quick brown fox jumps over the lazy dog.
+:w:pgSz
+
+:w:pgMar
+
+:w:cols
+
+:w:docGrid
+
+:w:sectPr
+
+:w:body
+JonathanHustonThe quick brown fox jumps over the lazy dog.
+:w:document
+JonathanHustonThe quick brown fox jumps over the lazy dog.
+JonathanHustonThe quick brown fox jumps over the lazy dog.
+nil
+clj::slatescript-tools.core=> 
+; Evaluating file: core.clj
+:w:r
+Jonathan
+:w:p
+Jonathan
+:w:p
+
+:w:r
+Huston
+:w:p
+Huston
+:w:p
+
+:w:r
+The quick 
+:w:r
+brown fox jumps over
+:w:r
+ the lazy dog.
+:w:p
+The quick brown fox jumps over the lazy dog.
+:w:body
+JonathanHustonThe quick brown fox jumps over the lazy dog.
+:w:document
+JonathanHustonThe quick brown fox jumps over the lazy dog.
+JonathanHustonThe quick brown fox jumps over the lazy dog.
+nil
+clj::slatescript-tools.core=> 
+; Evaluating file: core.clj
+:w:r
+Jonathan
+:w:p
+Jonathan
+:w:p
+
+:w:r
+Huston
+:w:p
+Huston
+:w:p
+
+:w:r
+The quick 
+:w:r
+brown fox jumps over
+:w:r
+ the lazy dog.
+:w:p
+The quick brown fox jumps over the lazy dog.
+:w:body
+JonathanHustonThe quick brown fox jumps over the lazy dog.
+:w:document
+JonathanHustonThe quick brown fox jumps over the lazy dog.
+JonathanHustonThe quick brown fox jumps over the lazy dog.
+nil
+clj::slatescript-tools.core=> 
+; Evaluating file: core.clj
+JonathanHustonThe quick brown fox jumps over the lazy dog.
+nil
+clj::slatescript-tools.core=> 
+; Evaluating file: core.clj
+Jonathan
+
+Huston
+
+The quick brown fox jumps over the lazy dog.
+nil
+clj::slatescript-tools.core=> 
+; Evaluating file: core.clj
+Jonathan
+
+Huston
+
+The quick brown fox jumps over the lazy dog.
+nil
+clj::slatescript-tools.core=> 

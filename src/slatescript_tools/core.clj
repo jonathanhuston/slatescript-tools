@@ -2,14 +2,16 @@
   (:gen-class)
   (:require [clojure.xml :as xml]))
 
+
 (declare get-content)
 
 (defn get-content-from-vector
   "iterates through content vector"
-  [acc tag content-vector]
-  (if (nil? content-vector)
-    (str acc "\n")
-    (str acc (clojure.string/join "" (map #(get-content "" %) content-vector)))))
+  [acc tag contents]
+  (let [joined (clojure.string/join "" (map #(get-content "" %) contents))]
+    (if (= tag :w:p)
+      (str acc joined "\n")
+      (str acc joined))))
 
 (defn get-content 
   "gets content from xml, adds to acc"
