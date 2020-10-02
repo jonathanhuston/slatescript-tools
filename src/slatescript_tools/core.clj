@@ -2,6 +2,7 @@
   (:gen-class)
   (:require [clojure.xml :as xml]))
 
+(def breaking-tags #{:w:p :w:br})
 
 (declare get-content)
 
@@ -9,7 +10,7 @@
   "iterates through content vector"
   [acc tag contents]
   (let [joined (clojure.string/join "" (map #(get-content "" %) contents))]
-    (if (= tag :w:p)
+    (if (some #(= tag %) breaking-tags)
       (str acc joined "\n")
       (str acc joined))))
 
@@ -38,19 +39,27 @@
 
 ; DEV: generic file name
 (def document "resources/word/document.xml")
+(def text-file "resources/document.txt")
 
-; DEV: print plain-text
+; DEV: save as plain-text
 (defn -main []
- (->
+ (->>
   document
   plain-text
-  print))
+  (spit text-file)))
 
 (-main)
 
 
-; DEV: parse document.html
+; DEV: parse document.html only
 (comment 
   (-> document xml/parse)
   )
 
+; DEV: print plain-text
+(comment
+  (->
+   document
+   plain-text
+   println)
+  )
