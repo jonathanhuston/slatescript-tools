@@ -4,17 +4,27 @@
             [clojure.xml :as xml]))
 
 (def breaking-tags #{:w:p :w:br})
-(def ignore-tags #{:w:sectPr :w:rPr})
+(def ignore-tags #{:w:sectPr :w:rFonts :w:color :w:w :w:sz})
 
 (declare get-content)
 
 (defn get-content-from-vector
-  "iterates through content vector"
+  "iterates through content vector, eliminates multiple spaces"
   [acc tag contents]
-  (let [joined (str/join "" (map #(get-content "" %) contents))]
+  (let [clean (->
+               (str/join "" (map #(get-content "" %) contents))
+               (str/replace #" +" " ")
+               (str/replace #"\n " "\n"))]
     (if (some #(= tag %) breaking-tags)
-      (str acc joined "\n")
-      (str acc joined))))
+      (str acc clean "\n")
+      (str acc clean))))
+
+(defn space? 
+  "add special space?"
+  [tag attrs contents]
+  (and 
+   (nil? contents)
+   (or (= tag :w:spacing) (= attrs {:xml:space "preserve"}))))
 
 (defn get-content 
   "gets content from xml, adds to acc"
@@ -27,7 +37,7 @@
       acc
       (cond
         (string? first-content) (str acc first-content)
-        (and (nil? contents) (= attrs {:xml:space "preserve"})) (str acc " ")
+        (space? tag attrs contents) (str acc " ")
         :else (get-content-from-vector acc tag contents)))))
 
 (defn plain-text
