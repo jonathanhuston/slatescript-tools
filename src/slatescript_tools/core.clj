@@ -6,7 +6,7 @@
 
 (defn get-content-from-vector
   "iterates through content vector"
-  [acc content-vector]
+  [acc tag content-vector]
   (if (nil? content-vector)
     (str acc "\n")
     (str acc (clojure.string/join "" (map #(get-content "" %) content-vector)))))
@@ -14,11 +14,14 @@
 (defn get-content 
   "gets content from xml, adds to acc"
   [acc xml]
-  (let [contents (:content xml)
-        first-elem (first contents)]
-    (if (string? first-elem)
-      (str acc first-elem "\n")
-      (get-content-from-vector acc contents))))
+  (let [tag (:tag xml)
+        contents (:content xml)
+        first-content (first contents)]
+    (case tag
+      (:w:sectPr :w:rPr) acc
+      (if (string? first-content)
+        (str acc first-content)
+        (get-content-from-vector acc tag contents)))))
 
 (defn plain-text
   "gets plain text from document-xml"
@@ -45,5 +48,7 @@
 
 
 ; DEV: parse document.html
-(-> document xml/parse)
+(comment 
+  (-> document xml/parse)
+  )
 
