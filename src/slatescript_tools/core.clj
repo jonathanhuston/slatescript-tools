@@ -18,13 +18,15 @@
   "gets content from xml, adds to acc"
   [acc xml]
   (let [tag (:tag xml)
+        attrs (:attrs xml)
         contents (:content xml)
         first-content (first contents)]
     (case tag
       (:w:sectPr :w:rPr) acc
-      (if (string? first-content)
-        (str acc first-content)
-        (get-content-from-vector acc tag contents)))))
+      (cond
+        (string? first-content) (str acc first-content)
+        (and (nil? contents) (= attrs {:xml:space "preserve"})) (str acc " ")
+        :else (get-content-from-vector acc tag contents)))))
 
 (defn plain-text
   "gets plain text from document-xml"
