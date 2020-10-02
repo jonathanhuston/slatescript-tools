@@ -4,6 +4,7 @@
             [clojure.xml :as xml]))
 
 (def breaking-tags #{:w:p :w:br})
+(def ignore-tags #{:w:sectPr :w:rPr})
 
 (declare get-content)
 
@@ -22,8 +23,8 @@
         attrs (:attrs xml)
         contents (:content xml)
         first-content (first contents)]
-    (case tag
-      (:w:sectPr :w:rPr) acc
+    (if (some #(= tag %) ignore-tags)
+      acc
       (cond
         (string? first-content) (str acc first-content)
         (and (nil? contents) (= attrs {:xml:space "preserve"})) (str acc " ")
