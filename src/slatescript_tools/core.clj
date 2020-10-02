@@ -1,6 +1,7 @@
 (ns slatescript-tools.core
   (:gen-class)
-  (:require [clojure.xml :as xml]))
+  (:require [clojure.string :as str]
+            [clojure.xml :as xml]))
 
 (def breaking-tags #{:w:p :w:br})
 
@@ -9,7 +10,7 @@
 (defn get-content-from-vector
   "iterates through content vector"
   [acc tag contents]
-  (let [joined (clojure.string/join "" (map #(get-content "" %) contents))]
+  (let [joined (str/join "" (map #(get-content "" %) contents))]
     (if (some #(= tag %) breaking-tags)
       (str acc joined "\n")
       (str acc joined))))
@@ -58,7 +59,7 @@
   (-> document xml/parse)
   )
 
-; DEV: print plain-text
+; DEV: display plain-text
 (comment
   (->
    document
