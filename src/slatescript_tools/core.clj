@@ -12,7 +12,7 @@
   "iterates through content vector, eliminates multiple spaces"
   [tag contents]
   (let [clean (->
-               (str/join "" (map #(get-content %) contents))
+               (reduce #(str %1 (get-content %2)) "" contents)
                (str/replace #" +" " ")
                (str/replace #"\n " "\n"))]
     (if (some #(= tag %) breaking-tags)
