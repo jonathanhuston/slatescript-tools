@@ -10,14 +10,14 @@
 
 (defn get-content-from-vector
   "iterates through content vector, eliminates multiple spaces"
-  [acc tag contents]
+  [tag contents]
   (let [clean (->
-               (str/join "" (map #(get-content "" %) contents))
+               (str/join "" (map #(get-content %) contents))
                (str/replace #" +" " ")
                (str/replace #"\n " "\n"))]
     (if (some #(= tag %) breaking-tags)
-      (str acc clean "\n")
-      (str acc clean))))
+      (str clean "\n")
+      clean)))
 
 (defn space? 
   "add special space?"
@@ -27,26 +27,25 @@
    (or (= tag :w:spacing) (= attrs {:xml:space "preserve"}))))
 
 (defn get-content 
-  "gets content from xml, adds to acc"
-  [acc xml]
+  "gets content from xml"
+  [xml]
   (let [tag (:tag xml)
         attrs (:attrs xml)
         contents (:content xml)
         first-content (first contents)]
-    (if (some #(= tag %) ignore-tags)
-      acc
-      (cond
-        (string? first-content) (str acc first-content)
-        (space? tag attrs contents) (str acc " ")
-        :else (get-content-from-vector acc tag contents)))))
+    (cond
+      (some #(= tag %) ignore-tags) ""
+      (string? first-content) first-content
+      (space? tag attrs contents) " "
+      :else (get-content-from-vector tag contents))))
 
 (defn plain-text
   "gets plain text from document-xml"
   [document-xml]
-  (->>
+  (->
    document-xml
    xml/parse
-   (get-content "")))
+   get-content))
 
 
 
