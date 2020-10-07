@@ -8,7 +8,7 @@
   [command]
   (sh "bash" "-c" command))
 
-(defn- trim-ext 
+(defn trim-ext 
   "trims extension from filename"
   [filename]
   (let [dot (.lastIndexOf filename ".")]
@@ -23,12 +23,14 @@
     .getName
     trim-ext))
 
+; TODO: return map of xml files
 (defn create-xml 
-  "converts docx into folder with xml files"
+  "converts docx into folder with xml files, returns xml filename of body"
   [docx]
   (let [dirname (.getParent (io/file docx))
         folder (get-root docx)]
-    (bash (str "unzip -o \"" docx "\" -d \"" dirname "/" folder "\""))))
+    (bash (str "unzip -o \"" docx "\" -d \"" dirname "/" folder "\""))
+    (str (trim-ext docx) "/word/document.xml")))
 
 (defn remove-xml
   "removes xml folder corresponding to docx"
