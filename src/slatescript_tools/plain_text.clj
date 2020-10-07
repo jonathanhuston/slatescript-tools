@@ -2,6 +2,7 @@
   (:require [clojure.string :as str]
             [clojure.xml :as xml]))
 
+
 (def breaking-tags #{:w:p :w:br})
 (def ignore-tags #{:w:sectPr :w:rFonts :w:color :w:w :w:sz})
 
