@@ -7,7 +7,7 @@
 
 (declare get-content)
 
-(defn get-content-from-vector
+(defn- get-content-from-vector
   "iterates through content vector, eliminates multiple spaces"
   [tag contents]
   (let [clean (->
@@ -18,14 +18,14 @@
       (str clean "\n")
       clean)))
 
-(defn space?
+(defn- space?
   "add special space?"
   [tag attrs contents]
   (and
    (nil? contents)
    (or (= tag :w:spacing) (= attrs {:xml:space "preserve"}))))
 
-(defn get-content
+(defn- get-content
   "gets content from xml"
   [xml]
   (let [tag (:tag xml)

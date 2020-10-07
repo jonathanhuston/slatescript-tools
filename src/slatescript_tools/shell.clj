@@ -2,18 +2,18 @@
   (:require [clojure.java.shell :refer [sh]]
             [clojure.java.io :as io]))
 
-(defn bash 
+(defn- bash 
   "executes bash command"
   [command]
   (sh "bash" "-c" command))
 
-(defn trim-ext 
+(defn- trim-ext 
   "trims extension from filename"
   [filename]
   (let [dot (.lastIndexOf filename ".")]
     (if (pos? dot) (subs filename 0 dot) filename)))
 
-(defn get-root 
+(defn- get-root 
   "gets root of filename without extension"
   [filename]
   (->
@@ -44,6 +44,3 @@
                 "mv " docx " ..;"
                 "cd .."))
      (when delete? (bash (str "rm -rf \"" folder "\""))))))
-
-(unzip-docx "resources/fma.docx")
-(create-docx "resources/fma")
