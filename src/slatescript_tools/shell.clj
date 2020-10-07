@@ -2,6 +2,7 @@
   (:require [clojure.java.shell :refer [sh]]
             [clojure.java.io :as io]))
 
+
 (defn- bash 
   "executes bash command"
   [command]
@@ -22,12 +23,18 @@
     .getName
     trim-ext))
 
-(defn unzip-docx 
+(defn create-xml 
   "converts docx into folder with xml files"
   [docx]
   (let [dirname (.getParent (io/file docx))
         folder (get-root docx)]
     (bash (str "unzip -o \"" docx "\" -d \"" dirname "/" folder "\""))))
+
+(defn remove-xml
+  "removes xml folder corresponding to docx"
+  [docx]
+  (let [folder (trim-ext docx)]
+    (bash (str "rm -rf \"" folder "\""))))
 
 (defn create-docx 
   "converts folder with xml files into docx
