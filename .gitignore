@@ -12,3 +12,5 @@ pom.xml.asc
 .hg/
 .calva/output-window/output.calva-repl
 /resources
+.rebel_readline_history
+.gitignore
