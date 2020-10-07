@@ -39,9 +39,9 @@
       :else (get-content-from-vector tag contents))))
 
 (defn plain-text
-  "gets plain text from document-xml"
-  [document-xml]
+  "gets plain text from xml file"
+  [xml-file]
   (->
-   document-xml
+   xml-file
    xml/parse
    get-content))
