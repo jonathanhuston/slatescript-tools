@@ -12,7 +12,7 @@
 
 ; DEV: save as plain-text
 (defn -main []
-    (create-docx "resources/fma"))
+    (create-docx "/Users/jonathanhuston/Polynote/fma"))
 
 (-main)
 

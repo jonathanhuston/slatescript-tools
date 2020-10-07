@@ -30,13 +30,20 @@
     (bash (str "unzip -o \"" docx "\" -d \"" dirname "/" folder "\""))))
 
 (defn create-docx 
-  "converts folder with xml files into docx"
-  [folder]
-  (let [basename (.getName (io/file folder))
-        docx (str "\"" basename ".docx\"")
-        backup (str "\"" basename " copy.docx\"")]
-    (bash (str "cd \"" folder "\";"
-               "zip -r " docx " *;"
-               "cp ../" docx " ../" backup ";"
-               "mv " docx " ..;"
-               "cd .."))))
+  "converts folder with xml files into docx
+  deletes folder if delete? flag set (default true)"
+  ([folder]
+   (create-docx folder true))
+  ([folder delete?]
+   (let [basename (.getName (io/file folder))
+         docx (str "\"" basename ".docx\"")
+         backup (str "\"" basename " copy.docx\"")]
+     (bash (str "cd \"" folder "\";"
+                "zip -r " docx " *;"
+                "cp ../" docx " ../" backup ";"
+                "mv " docx " ..;"
+                "cd .."))
+     (when delete? (bash (str "rm -rf \"" folder "\""))))))
+
+(unzip-docx "resources/fma.docx")
+(create-docx "resources/fma")
