@@ -14,23 +14,15 @@
   (let [dot (.lastIndexOf filename ".")]
     (if (pos? dot) (subs filename 0 dot) filename)))
 
-(defn- get-root 
-  "gets root of filename without extension"
-  [filename]
-  (->
-    filename
-    io/file
-    .getName
-    trim-ext))
-
 ; TODO: return map of xml files
 (defn create-xml 
   "converts docx into folder with xml files, returns xml filename of body"
   [docx]
-  (let [dirname (.getParent (io/file docx))
-        folder (get-root docx)]
-    (bash (str "unzip -o \"" docx "\" -d \"" dirname "/" folder "\""))
-    (str (trim-ext docx) "/word/document.xml")))
+  (let [folder (trim-ext docx)
+        exit (:exit (bash (str "unzip -o \"" docx "\" -d \"" folder "\"")))]
+    (if (zero? exit)
+      (str folder "/word/document.xml")
+      nil)))
 
 (defn remove-xml
   "removes xml folder corresponding to docx"
