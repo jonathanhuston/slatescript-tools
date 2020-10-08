@@ -6,12 +6,12 @@
   "given remaining parens, accumulate vector of consecutive parens of same type"
   [p type index acc]
   (cond
-    (= (count p) 1) (if (and (= type \() (= (first p) \()) ; last paren open
-                      (conj acc (inc index))
-                      acc)
-    (not= type (first p)) (recur (rest p) type index acc) ; skip type
+    (= (count p) 1) (if (and (= type \() (= (first p) \()) ; base case
+                      (conj acc (inc index))              ; last paren open
+                      acc)                                ; last paren closed
+    (not= type (first p)) (recur (rest p) type index acc)  ; skip type
     (= (first p) (second p)) (recur (rest p) type (inc index) (conj acc (inc index))) ; double
-    :else (recur (rest p) type (inc index) acc))) ; single
+    :else (recur (rest p) type (inc index) acc)))         ; single
 
 
 (defn- find-unbalanced
