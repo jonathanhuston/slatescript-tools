@@ -2,7 +2,7 @@
   (:gen-class)
   (:require [slatescript-tools.plain-text :refer [plain-text]]
             [slatescript-tools.shell :refer [trim-ext create-xml remove-xml create-docx]]
-            [slatescript-tools.validate :refer [parens]]))
+            [slatescript-tools.validate :refer [parens checknums]]))
 
 
 ; DEV
@@ -17,8 +17,7 @@
   [xml-file]
   (->
    xml-file
-   plain-text
-   println))
+   plain-text))
 
 
 (defn save-as-txt
@@ -34,14 +33,27 @@
 (defn check-parens
   "check whether parens are balanced in docx"
   [docx]
-  (->
-   docx
-   create-xml
-   parens
-   println)
-  (remove-xml docx))
+  (let [result 
+        (->
+         docx
+         create-xml
+         parens)]
+    (remove-xml docx)
+    result))
+
+(defn check-numbers
+  "checks whether numbers are identical in two docx"
+  [docx1 docx2]
+  (let [xml1 (create-xml docx1)
+        xml2 (create-xml docx2)
+        result (checknums xml1 xml2)]
+    (remove-xml docx1)
+    (remove-xml docx2)
+    result))
 
 (defn -main []
-  (check-parens "resources/mixed.docx"))
+  (prn (check-parens "resources/mixed-de.docx"))
+  (prn (check-numbers "resources/mixed-de.docx" "resources/mixed.docx"))
+  )
 
 (-main)
