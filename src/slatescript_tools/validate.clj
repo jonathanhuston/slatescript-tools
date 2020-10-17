@@ -12,6 +12,7 @@
   "given remaining parens, accumulate vector of consecutive parens of same type"
   [p type index acc]
   (cond
+    (nil? p) acc                                          ; docx with no parens
     (= (count p) 1) (if (and (= type \() (= (first p) \()) ; base case
                       (conj acc (inc index))              ; last paren open
                       acc)                                ; last paren closed
