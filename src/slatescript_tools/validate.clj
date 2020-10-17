@@ -34,6 +34,7 @@
    xml-file
    plain-text
    (filter #(some #{%} [\( \)]))
+   seq
    find-unbalanced))
 
 ; checknums helpers
