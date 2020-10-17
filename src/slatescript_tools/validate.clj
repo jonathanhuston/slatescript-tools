@@ -62,12 +62,11 @@
 (defn- mismatched-positions
   "creates list of mismatched positions in acc"
   [digits diffs acc]
-  (if (empty? digits)
-    acc
-    (if (nil? (first diffs))
-      (recur (rest digits) (rest diffs) acc)
-      (recur (rest digits) (rest diffs) (conj acc (first digits))))))
-
+  (cond 
+    (empty? digits) acc
+    (nil? (first diffs)) (recur (rest digits) (rest diffs) acc)
+    (= 1 (count (first diffs))) (recur (rest digits) (rest diffs) acc)
+    :else (recur (rest digits) (rest diffs) (conj acc (first digits)))))
 
 (defn- get-context
   "given mismatched positions, returns context of mismatch in string"
