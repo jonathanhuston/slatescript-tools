@@ -53,10 +53,12 @@
 
 (defn -main 
   "launches save-as-txt, check-parens, and check-numbers tools"
-  [tool & args]
-  (case tool
-    "save-as-txt" (save-as-txt (first args))
-    "check-parens" (prn (check-parens (first args)))
-    "check-numbers" (run! prn (check-numbers (first args) (second args)))
-    (println "Usage: slatescript-tools <save-as-txt|check-parens|check-numbers> docx1 [docx2]")
-  ))
+  ([]
+   (-main "help"))
+  ([tool & args]
+   (case tool
+     "save-as-txt" (save-as-txt (first args))
+     "check-parens" (prn (check-parens (first args)))
+     "check-numbers" (run! prn (check-numbers (first args) (second args)))
+     (println "Usage: slatescript-tools <save-as-txt|check-parens|check-numbers> docx1 [docx2]"))
+   (shutdown-agents)))
