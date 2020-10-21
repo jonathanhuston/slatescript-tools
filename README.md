@@ -4,7 +4,7 @@ Tools for validating translated Word documents
 
 ## Usage
 
-    $ java -jar slatescript-tools-0.1.0-standalone.jar <tool> docx1 [docx2]
+    $ java --illegal-access=deny -jar slatescript-tools-0.1.0-standalone.jar <tool> docx1 [docx2]
     
     Tools:
        txt docx:                converts docx1 to UTF-8 text
