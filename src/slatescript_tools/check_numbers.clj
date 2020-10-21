@@ -1,43 +1,11 @@
-(ns slatescript-tools.validate
+(ns slatescript-tools.check-numbers
   (:require [clojure.string :refer [trim]]
             [clojure.data :refer [diff]]
             [slatescript-tools.plain-text :refer [plain-text]]))
 
 
-; maximum slice for checknums
 (def slice 10)
 
-; parens helpers
-(defn- acc-doubles
-  "given remaining parens, accumulate vector of consecutive parens of same type"
-  [p type index acc]
-  (cond
-    (nil? p) acc                                          ; docx with no parens
-    (= (count p) 1) (if (and (= type \() (= (first p) \()) ; base case
-                      (conj acc (inc index))              ; last paren open
-                      acc)                                ; last paren closed
-    (not= type (first p)) (recur (rest p) type index acc)  ; skip type
-    (= (first p) (second p)) (recur (rest p) type (inc index) (conj acc (inc index))) ; double
-    :else (recur (rest p) type (inc index) acc)))         ; single
-
-
-(defn- find-unbalanced
-  "given locations of all parens, returns {:open i :closed j} of indexes of unbalanced parens"
-  [all-parens]
-  {:open (acc-doubles all-parens \( 0 []), 
-   :closed (acc-doubles all-parens \) 1 [])})
-
-(defn parens 
-  "given xml file, returns {:open i :closed j} of indexes of unbalanced parens"
-  [xml-file]
-  (->>
-   xml-file
-   plain-text
-   (filter #(some #{%} [\( \)]))
-   seq
-   find-unbalanced))
-
-; checknums helpers
 (defn- is-digit? 
   "checks whether c is a digit"
   [c]
@@ -79,7 +47,7 @@
    dedupe)
   )
 
-(defn checknums
+(defn check-numbers
   "compares two xml files, returns [[slices1] [slices2]] of unmatched digits"
   [xml1 xml2]
   (let [s1 (plain-text xml1)
