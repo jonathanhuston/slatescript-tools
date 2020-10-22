@@ -52,7 +52,7 @@
   "print CLI help text"
   []
   (println 
-"Tools for validating translated Word documents
+"Tools for validating translated Microsoft Word (.docx) documents
 
 Usage:
    slatescript-tools <tool> docx1 [docx2]
