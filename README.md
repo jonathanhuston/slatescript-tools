@@ -1,6 +1,15 @@
 # slatescript-tools
 
-Tools for validating translated Word documents
+Tools for validating translated Microsoft Word (.docx) documents
+
+## Installation
+
+git clone https://github.com/jonathanhuston/slatescript-tools.git
+lein uberjar
+
+or
+
+docker pull jonathanhuston/slatescript-tools
 
 ## Usage
 
