@@ -8,13 +8,17 @@ git clone https://github.com/jonathanhuston/slatescript-tools.git
 
 lein uberjar
 
-or
+or:
 
 docker pull jonathanhuston/slatescript-tools
 
 ## Usage
 
-    $ java --illegal-access=deny -jar slatescript-tools-0.1.0-standalone.jar <tool> docx1 [docx2]
+    $ java -jar slatescript-tools-0.1.0-SNAPSHOT-standalone.jar <tool> docx1 [docx2]
+    
+    or bash helper script for running Docker image:
+    
+    $ sstd <tool> docx1 [docx2]
     
     Tools:
        txt docx:                converts docx1 to UTF-8 text

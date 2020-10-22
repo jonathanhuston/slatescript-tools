@@ -1,21 +1,30 @@
 #!/usr/bin/env bash
 
-tool=${1:-"help"}
+# TODO: validate arguments
 
-if [ "$#" -eq 2 ]
-then
-  path1=$(realpath $2)
-  file1=$(basename $path1)
-  echo $path1
-  echo $file1
-  docker run --rm -v "$path1":/tmp/"$file1" jonathanhuston/slatescript-tools "$1" /tmp/"$file1"
-elif [ "$#" -eq 3 ]
-then
-  path1=$(realpath $2)
-  path2=$(realpath $3)
-  file1=$(basename $path1)
-  file2=$(basename $path2)
-  docker run --rm -v "$path1":/tmp/"$file1" -v "$path2":/tmp/"$file2" jonathanhuston/slatescript-tools "$1" /tmp/"$file1" /tmp/"$file2"
-else
-  docker run --rm jonathanhuston/slatescript-tools "$1"
-fi
+tool=$(echo ${1:-"help"} | tr '[:upper:]' '[:lower:]')
+
+case $tool in
+  txt)
+    path1=$(realpath $2)
+    file1=$(basename $path1)
+    docker run --name sstd -v "$path1":/tmp/"$file1" jonathanhuston/slatescript-tools txt /tmp/"$file1"
+    docker cp sstd:/tmp/"${file1//.docx/.txt}" "${path1//.docx/.txt}"
+    docker container rm sstd
+    ;;
+  parens)
+    path1=$(realpath $2)
+    file1=$(basename $path1)
+    docker run --rm -v "$path1":/tmp/"$file1" jonathanhuston/slatescript-tools parens /tmp/"$file1"
+    ;;
+  checknums)
+    path1=$(realpath $2)
+    path2=$(realpath $3)
+    file1=$(basename $path1)
+    file2=$(basename $path2)
+    docker run --rm -v "$path1":/tmp/"$file1" -v "$path2":/tmp/"$file2" jonathanhuston/slatescript-tools "$1" /tmp/"$file1" /tmp/"$file2"
+    ;;
+  *)
+    docker run --rm jonathanhuston/slatescript-tools help
+    ;;
+esac
