@@ -22,7 +22,7 @@ case $tool in
     path2=$(realpath $3)
     file1=$(basename $path1)
     file2=$(basename $path2)
-    docker run --rm -v "$path1":/tmp/"$file1" -v "$path2":/tmp/"$file2" jonathanhuston/slatescript-tools "$1" /tmp/"$file1" /tmp/"$file2"
+    docker run --rm -v "$path1":/tmp/"$file1" -v "$path2":/tmp/"$file2" jonathanhuston/slatescript-tools checknums /tmp/"$file1" /tmp/"$file2"
     ;;
   *)
     docker run --rm jonathanhuston/slatescript-tools help
