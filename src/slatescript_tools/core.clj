@@ -44,7 +44,7 @@
   (let [arity (count args)
         sing-plur (if (= num 1) "argument," "arguments,")]
     (cond 
-      (not= arity num) (println "Should be" num sing-plur arity "passed.")
+      (not= arity num) (println "Expected" num sing-plur "not" (str arity "."))
       (not-every? true? (map #(.exists (io/file %)) args)) (println "File not found.")
       :else (apply tool args))))
 

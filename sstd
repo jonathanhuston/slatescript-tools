@@ -1,28 +1,48 @@
 #!/usr/bin/env bash
 
-# TODO: validate arguments
-
 tool=$(echo ${1:-"help"} | tr '[:upper:]' '[:lower:]')
+
+paths=()
+bases=()
+
+getfiles () {
+  if [ $1 -ne $(expr $BASH_ARGC - 1) ]; then
+    if [ $1 -eq 1 ]; then
+      sing_plur="argument"
+    else
+      sing_plur="arguments"
+    fi
+    echo Expected $1 $sing_plur, not $(expr $BASH_ARGC - 1).
+    exit 1
+  fi
+
+  for ((i=1; i<=$1; i++))
+  do
+    file=${BASH_ARGV[$1-$i]}
+    if [ ! -f $file ]; then
+      echo File $file not found.
+      exit 1
+    fi
+    path=($(realpath $file))
+    paths+=($path)
+    bases+=($(basename $path))
+  done
+}
 
 case $tool in
   txt)
-    path1=$(realpath $2)
-    file1=$(basename $path1)
-    docker run --name sstd -v "$path1":/tmp/"$file1" jonathanhuston/slatescript-tools txt /tmp/"$file1"
-    docker cp sstd:/tmp/"${file1//.docx/.txt}" "${path1//.docx/.txt}"
-    docker container rm sstd
+    getfiles 1
+    docker run --name sstd -v "${paths[0]}":/tmp/"${bases[0]}" jonathanhuston/slatescript-tools txt /tmp/"${bases[0]}"
+    docker cp sstd:/tmp/"${bases[0]//.docx/.txt}" "${paths[0]//.docx/.txt}"
+    docker container rm sstd 1> /dev/null
     ;;
   parens)
-    path1=$(realpath $2)
-    file1=$(basename $path1)
-    docker run --rm -v "$path1":/tmp/"$file1" jonathanhuston/slatescript-tools parens /tmp/"$file1"
+    getfiles 1
+    docker run --rm -v "${paths[0]}":/tmp/"${bases[0]}" jonathanhuston/slatescript-tools parens /tmp/"${bases[0]}"
     ;;
   checknums)
-    path1=$(realpath $2)
-    path2=$(realpath $3)
-    file1=$(basename $path1)
-    file2=$(basename $path2)
-    docker run --rm -v "$path1":/tmp/"$file1" -v "$path2":/tmp/"$file2" jonathanhuston/slatescript-tools checknums /tmp/"$file1" /tmp/"$file2"
+    getfiles 2
+    docker run --rm -v "${paths[0]}":/tmp/"${bases[0]}" -v "${paths[1]}":/tmp/"${bases[1]}" jonathanhuston/slatescript-tools checknums /tmp/"${bases[0]}" /tmp/"${bases[1]}"
     ;;
   *)
     docker run --rm jonathanhuston/slatescript-tools help
