@@ -16,7 +16,7 @@ docker pull jonathanhuston/slatescript-tools
 
     $ java -jar slatescript-tools-0.1.0-SNAPSHOT-standalone.jar <tool> docx1 [docx2]
     
-    or bash helper script for running Docker image:
+    or bash helper script for running (and installing) Docker image:
     
     $ sstd <tool> docx1 [docx2]
     
