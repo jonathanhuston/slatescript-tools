@@ -6,7 +6,6 @@
             [slatescript-tools.check-parens :refer [check-parens]]
             [slatescript-tools.check-numbers :refer [check-numbers]]))
 
-
 (defn txt
   "save body of docx as plain text"
   [docx]

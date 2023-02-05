@@ -1,10 +1,12 @@
 (ns slatescript-tools.check-numbers
   (:require [clojure.string :refer [trim]]
             [clojure.data :refer [diff]]
-            [slatescript-tools.plain-text :refer [plain-text]]))
+            [slatescript-tools.plain-text :refer [plain-text]]
+            [slatescript-tools.clipboard :refer [paste-clipboard]]))
 
+;; FIX: table of contents
 
-(def slice 10)
+(def slice 20)
 
 (defn- is-digit? 
   "checks whether c is a digit"
@@ -48,7 +50,7 @@
   )
 
 (defn check-numbers
-  "compares two xml files, returns [[slices1] [slices2]] of unmatched digits"
+  "compares two xml files, returns 10 [[slices1] [slices2]] of unmatched digits"
   [xml1 xml2]
   (let [s1 (plain-text xml1)
         s2 (plain-text xml2)
@@ -59,4 +61,5 @@
         pos2 (mismatched-positions digits2 diff2 [])
         context1 (get-context pos1 s1)
         context2 (get-context pos2 s2)]
-    [context1 context2]))
+    (paste-clipboard (first context1))
+    [(take 10 context1) (take 10 context2)]))
