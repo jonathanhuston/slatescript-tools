@@ -126,8 +126,38 @@ src/slatescript_tools/
 - **Context Slicing**: When reporting mismatches, provides 20 characters before and after the position (configurable via `slice` constant)
 - **AI Translation Validation**: Uses Claude Sonnet 4.5 via Anthropic API to identify omissions in translations
   - Automatically chunks documents over 50k characters for analysis
-  - Chunks at paragraph boundaries to preserve context
+  - Uses structural chunking (matching headings between source/target) when possible
+  - Falls back to paragraph-based chunking if < 2 headings match
+  - Strips Word formatting prefixes (`left`, `center`, etc.) before heading detection
+  - Splits on `\n+` to match actual paragraph structure from plain-text extraction
   - Each chunk analyzed separately with results combined in final report
   - Requires `ANTHROPIC_API_KEY` environment variable
+  - Note: validate tool is NOT available via Docker/sstd — run directly with Java
 - **Platform Assumption**: Uses bash commands (`unzip`, `rm`, `zip`) and assumes Unix-like environment
 - **Java AWT Dependency**: Clipboard functionality uses `java.awt.Toolkit` for system clipboard access
+
+## Building Old Versions for A/B Testing
+
+To build an old version for comparison testing (e.g., after changing the validate tool):
+
+```bash
+# Save current commit hash
+CURRENT=$(git rev-parse HEAD)
+
+# Checkout old version, build, save jar to project root (not target/ which gets cleaned)
+git checkout <old-commit> -- .
+lein uberjar
+cp target/uberjar/slatescript-tools-0.1.0-SNAPSHOT-standalone.jar ./slatescript-tools-OLD.jar
+
+# Restore current version and rebuild
+git checkout $CURRENT -- .
+lein uberjar
+```
+
+Then compare:
+```bash
+java -jar slatescript-tools-OLD.jar validate source.docx target.docx
+java -jar target/uberjar/slatescript-tools-0.1.0-SNAPSHOT-standalone.jar validate source.docx target.docx
+```
+
+**Important**: Copy the old jar to the project root, not `target/uberjar/`, because `lein uberjar` cleans the target directory before building.
