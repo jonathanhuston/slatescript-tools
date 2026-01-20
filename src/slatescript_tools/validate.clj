@@ -38,7 +38,7 @@
 (defn- chunk-text
   "splits text into chunks of approximately max-chars, breaking at paragraph boundaries"
   [text max-chars]
-  (let [paragraphs (str/split text #"\n\n+")]
+  (let [paragraphs (str/split text #"\n+")]
     (loop [chunks []
            current-chunk []
            current-size 0
@@ -59,6 +59,141 @@
                    (conj current-chunk para)
                    (+ current-size para-size)
                    (rest remaining))))))))
+
+;; Heading patterns for structural chunking
+(def ^:private heading-patterns
+  [#"^([A-Z]\.[\d.]+)\s+"                  ; A.1. or A.2.1 or B.2.1.1
+   #"^([A-Z])\s+[A-Z]"                     ; A Energiegewinnung (single letter followed by title)
+   #"^(\d+\.[\d.]*)\s+"                    ; 1. or 1.2. or 1.2.3.
+   #"^([IVXLC]+\.)\s+"                     ; I. II. III. IV. etc.
+   #"^([a-z]\))\s+"                        ; a) b) c)
+   #"^(\(\d+\))\s+"                        ; (1) (2) (3)
+   #"(?i)^(section\s+\d+)"                 ; Section 1, Section 2
+   #"(?i)^(chapter\s+\d+)"                 ; Chapter 1, Chapter 2
+   #"(?i)^(part\s+[IVXLC\d]+)"             ; Part I, Part 1
+   #"(?i)^(article\s+\d+)"                 ; Article 1, Article 2
+   #"(?i)^(§\s*\d+)"])                     ; § 1, § 2
+
+(defn- strip-formatting-prefixes
+  "removes Word formatting artifacts from beginning of text"
+  [text]
+  (-> text
+      str/trim
+      ;; Remove common Word alignment/formatting words that get included
+      (str/replace #"^(left|right|center|justify|both)+" "")
+      str/trim))
+
+(defn- extract-heading-id
+  "extracts a normalized identifier from a heading line, or nil if not a heading"
+  [line]
+  (let [cleaned (strip-formatting-prefixes line)]
+    (when (< (count cleaned) 100)  ; headings are typically short
+      (some (fn [pattern]
+              (when-let [match (re-find pattern cleaned)]
+                (-> (if (vector? match) (second match) match)
+                    str/lower-case
+                    (str/replace #"\s+" "")
+                    (str/replace #"\.$" ""))))
+            heading-patterns))))
+
+(defn- find-headings
+  "finds all headings in text with their paragraph indices and identifiers
+   returns: [{:index n :id \"1.2\" :text \"1.2 Introduction\"} ...]"
+  [text]
+  (let [paragraphs (str/split text #"\n+")]
+    (->> paragraphs
+         (map-indexed (fn [idx para]
+                        (when-let [id (extract-heading-id para)]
+                          {:index idx :id id :text (subs para 0 (min 60 (count para)))})))
+         (filter some?)
+         vec)))
+
+(defn- match-headings
+  "finds headings that appear in both source and target documents
+   returns: sequence of {:id :source-index :target-index} for matched headings"
+  [source-headings target-headings]
+  (let [target-by-id (group-by :id target-headings)]
+    (->> source-headings
+         (keep (fn [{:keys [id index]}]
+                 (when-let [target-match (first (get target-by-id id))]
+                   {:id id
+                    :source-index index
+                    :target-index (:index target-match)})))
+         ;; ensure headings are in order (by source index)
+         (sort-by :source-index))))
+
+(defn- select-chunk-boundaries
+  "selects which matched headings to use as chunk boundaries based on target size
+   aims for chunks of approximately target-chars characters"
+  [matched-headings source-paragraphs target-paragraphs target-chars]
+  (if (empty? matched-headings)
+    []
+    (loop [boundaries [0]  ; start with beginning
+           remaining matched-headings
+           last-source-idx 0
+           accumulated-chars 0]
+      (if (empty? remaining)
+        boundaries
+        (let [{:keys [source-index target-index]} (first remaining)
+              ;; estimate chars from last boundary to this heading
+              source-slice (->> source-paragraphs
+                                (drop last-source-idx)
+                                (take (- source-index last-source-idx))
+                                (str/join "\n\n"))
+              target-slice (->> target-paragraphs
+                                (drop last-source-idx)
+                                (take (- target-index last-source-idx))
+                                (str/join "\n\n"))
+              slice-chars (+ (count source-slice) (count target-slice))
+              new-accumulated (+ accumulated-chars slice-chars)]
+          (if (>= new-accumulated target-chars)
+            ;; this heading becomes a chunk boundary
+            (recur (conj boundaries source-index)
+                   (rest remaining)
+                   source-index
+                   0)
+            ;; keep accumulating
+            (recur boundaries
+                   (rest remaining)
+                   last-source-idx
+                   new-accumulated)))))))
+
+(defn- chunk-by-structure
+  "chunks source and target texts at matched heading boundaries
+   returns: [[source-chunk1 target-chunk1] [source-chunk2 target-chunk2] ...]"
+  [source-text target-text target-chars-per-chunk]
+  (let [source-paragraphs (str/split source-text #"\n+")
+        target-paragraphs (str/split target-text #"\n+")
+        source-headings (find-headings source-text)
+        target-headings (find-headings target-text)
+        matched (match-headings source-headings target-headings)]
+    (if (< (count matched) 2)
+      ;; not enough structural markers, return nil to signal fallback
+      nil
+      (let [;; build map of source heading index -> target heading index
+            source-to-target (->> matched
+                                  (map (fn [{:keys [source-index target-index]}]
+                                         [source-index target-index]))
+                                  (into {}))
+            boundaries (select-chunk-boundaries matched source-paragraphs
+                                                target-paragraphs target-chars-per-chunk)
+            ;; add end boundaries
+            boundaries (conj boundaries (count source-paragraphs))]
+        (->> (partition 2 1 boundaries)
+             (map (fn [[start end]]
+                    (let [;; find corresponding target indices
+                          target-start (get source-to-target start 0)
+                          target-end (get source-to-target end (count target-paragraphs))
+                          source-chunk (->> source-paragraphs
+                                            (drop start)
+                                            (take (- end start))
+                                            (str/join "\n\n"))
+                          target-chunk (->> target-paragraphs
+                                            (drop target-start)
+                                            (take (- target-end target-start))
+                                            (str/join "\n\n"))]
+                      [source-chunk target-chunk])))
+             vec)))))
 
 (defn- should-chunk?
   "determines if texts should be chunked based on combined length"
@@ -86,27 +221,42 @@
 
 (defn- validate-chunk-pair
   "validates a single pair of source and target chunks"
-  [source-chunk target-chunk chunk-num api-key]
+  [source-chunk target-chunk chunk-num total-chunks api-key]
+  (println (str "Analyzing chunk " chunk-num " of " total-chunks "..."))
   (let [prompt (build-prompt source-chunk target-chunk)]
-    (str "## Chunk " chunk-num "\n\n"
+    (str "## Chunk " chunk-num " of " total-chunks "\n\n"
          (call-claude-api prompt api-key)
          "\n\n")))
 
-(defn- validate-chunked
-  "validates translation by analyzing chunks separately"
-  [source-text target-text api-key]
-  (let [source-chunks (chunk-text source-text 20000)
-        target-chunks (chunk-text target-text 20000)
-        num-chunks (max (count source-chunks) (count target-chunks))]
+(defn- validate-with-chunks
+  "validates using provided chunk pairs"
+  [chunk-pairs api-key chunking-method]
+  (let [num-chunks (count chunk-pairs)]
     (str "# Translation Validation Report (Chunked Analysis)\n\n"
-         "*Note: Document was analyzed in " num-chunks " chunk(s) due to length.*\n\n"
+         "*Note: Document was analyzed in " num-chunks " chunk(s) using " chunking-method ".*\n\n"
          (apply str
-                (for [i (range num-chunks)]
-                  (validate-chunk-pair
-                   (get source-chunks i "")
-                   (get target-chunks i "")
-                   (inc i)
-                   api-key))))))
+                (map-indexed
+                 (fn [i [source-chunk target-chunk]]
+                   (validate-chunk-pair source-chunk target-chunk (inc i) num-chunks api-key))
+                 chunk-pairs)))))
+
+(defn- validate-chunked
+  "validates translation by analyzing chunks separately
+   tries structural chunking first, falls back to paragraph-based"
+  [source-text target-text api-key]
+  (if-let [structural-chunks (chunk-by-structure source-text target-text 40000)]
+    (do
+      (println (str "Found " (count structural-chunks) " structural chunk(s) based on headings..."))
+      (validate-with-chunks structural-chunks api-key "structural alignment (headings)"))
+    (do
+      (println "No structural markers found, using paragraph-based chunking...")
+      (let [source-chunks (chunk-text source-text 20000)
+            target-chunks (chunk-text target-text 20000)
+            num-chunks (max (count source-chunks) (count target-chunks))
+            chunk-pairs (for [i (range num-chunks)]
+                          [(get source-chunks i "")
+                           (get target-chunks i "")])]
+        (validate-with-chunks chunk-pairs api-key "paragraph boundaries")))))
 
 (defn- validate-whole
   "validates translation by analyzing entire documents"
